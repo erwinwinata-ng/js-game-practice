@@ -10,6 +10,22 @@ class Grid {
     this.grid[Math.floor((y * this.width) + x)] = color;
   }
 
+  setCircle(x_center, y_center, colorFunction, radius = 0, numPoint = 360) {
+    const x_min = Math.floor(x_center - radius);
+    const x_max = Math.ceil(x_center + radius);
+    const y_min = Math.floor(y_center - radius);
+    const y_max = Math.ceil(y_center + radius);
+
+    for (let x = x_min; x <= x_max; x++) {
+      for (let y = y_min; y <= y_max; y++) {
+        // Check if (x, y) is inside the circle
+        if ((x - x_center) * (x - x_center) + (y - y_center) * (y - y_center) <= radius * radius) {
+          this.set(x, y, colorFunction());
+        }
+      }
+    }
+  }
+
   swap(a, b) {
     const temp = this.grid[a];
     this.grid[a] = this.grid[b];
@@ -24,7 +40,7 @@ class Grid {
     if (!this.isEmpty(i)) {
       const below = i + this.width;
 
-      const direction = Math.random() < 0.5 ? -1 : 1;
+      const direction = Math.random() > 0.5 ? -1 : 1;
       const belowA = below - direction;
       const belowB = below + direction;
 

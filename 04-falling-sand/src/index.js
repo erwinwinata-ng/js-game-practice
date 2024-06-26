@@ -1,5 +1,5 @@
-GRID_HEIGHT = 100;
-GRID_WIDTH = 100;
+GRID_HEIGHT = 150;
+GRID_WIDTH = 150;
 PIXEL_WIDTH = 5;
 FALL_ACCELERATION = 0.05;
 
@@ -18,30 +18,16 @@ function clear() {
   context.strokeRect(0, 0, canvas.width, canvas.height);
 }
 
-let frameCount = 0;
-
 function loop(time) {
-  if (frameCount % (60 / 15) === 0) {
-    clear();
+  clear();
 
-    grid.update();
-    grid.draw();
-  }
+  grid.update();
+  grid.draw();
 
-  frameCount++;
   requestAnimationFrame(loop);
 }
 
 requestAnimationFrame(loop);
-
-let isMouseDown = false;
-
-document.addEventListener('mousedown', function (event) {
-  isMouseDown = true;
-});
-document.addEventListener('mouseup', function (event) {
-  isMouseDown = false;
-});
 
 function getRandomSandColor() {
   // Define ranges for HSL values that represent sand colors
@@ -54,10 +40,40 @@ function getRandomSandColor() {
   return hslColor;
 }
 
-document.addEventListener('mousemove', function (event) {
+let isMouseDown = false;
+let intervalId = null;
+let lastEvent = null;
+
+function performAction() {
+  if (lastEvent) {
+    var x = Math.floor(lastEvent.offsetX / PIXEL_WIDTH);
+    var y = Math.floor(lastEvent.offsetY / PIXEL_WIDTH);
+    grid.setCircle(x, y, getRandomSandColor, 2);
+  }
+}
+
+// Start the action when mouse is held down
+document.addEventListener('mousedown', function (event) {
+  if (!isMouseDown) {
+    isMouseDown = true;
+    lastEvent = event;
+    performAction(); // Call the action function immediately
+    intervalId = setInterval(performAction, 10); // Optionally, continue the action every 100ms
+  }
+});
+
+// Stop the action when mouse is released
+document.addEventListener('mouseup', function (event) {
   if (isMouseDown) {
-    var x = Math.floor(event.offsetX / PIXEL_WIDTH);
-    var y = Math.floor(event.offsetY / PIXEL_WIDTH);
-    grid.set(x, y, getRandomSandColor());
+    isMouseDown = false;
+    clearInterval(intervalId); // Clear the interval to stop continuous execution
+  }
+});
+
+// Optionally, perform the action continuously while the mouse moves
+document.addEventListener('mousemove', function (event) {
+  lastEvent = event;
+  if (isMouseDown) {
+    performAction(); // Call the action function on mouse move if needed
   }
 });
