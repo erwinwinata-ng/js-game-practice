@@ -1,6 +1,6 @@
-GRID_HEIGHT = 60;
-GRID_WIDTH = 40;
-PIXEL_WIDTH = 10;
+GRID_HEIGHT = 100;
+GRID_WIDTH = 100;
+PIXEL_WIDTH = 5;
 FALL_ACCELERATION = 0.05;
 
 canvas = document.getElementById('game');
